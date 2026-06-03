@@ -24,6 +24,10 @@ function update(){
     display.textContent = currentExpression || '0'
 }
 
+function resultCal(){
+    let 
+}
+
 function clearCal(){
     
 }
