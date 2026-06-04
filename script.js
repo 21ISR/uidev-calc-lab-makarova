@@ -1,90 +1,70 @@
-const display = document.querySelector('.display');
-const buttons = document.querySelectorAll('button');
+const display = document.querySelector('.display')
+const buttons = document.querySelectorAll('.button');
 
 let currentExpression = '';
 
-function handleButton(event) {
-    const value = event.target.textContent;
-    
-    console.log('Нажата кнопка:', value); // Для отладки
+function handleButton(button) {
+    const value = button.target.textContent;
 
     if (value === '=') {
-        resultCal();
-    } else if (value === 'AC' || value === 'C') {
-        clearCal();
+        resultCalculate()
+    } else if (value === 'AC') {
+        clearDisplay()
     } else if (value === '+/-') {
-        toggleSign();
+        toggleSign()
     } else if (value === '%') {
-        handlePercent();
+        handlePercent()
     } else {
-        currentExpression += value;
-        update();
+        currentExpression += value
+        updateDisplay()
     }
-}
 
-function update() {
-    display.textContent = currentExpression || '0';
-}
+    function updateDisplay() {
+        display.textContent = currentExpression || '0'
+    }
 
-function resultCal() {
-    try {
-        let expression = currentExpression
-            .replaceAll('×', '*')
-            .replaceAll('÷', '/')
-            .replaceAll('−', '-');
-        
-        const result = eval(expression);
-        if (!isFinite(result)) {
-            display.textContent = 'Error';
-            currentExpression = '';
-        } else {
 
-            const roundedResult = Math.round(result * 1000000000) / 1000000000;
-            currentExpression = String(roundedResult);
-            update();
+    function clearDisplay() {
+        currentExpression = ''
+        updateDisplay()
+    }
+
+    function resultCalculate() {
+        if (currentExpression.includes('%')) {
+            const numbers = currentExpression.split("%")
+            const res = (numbers[0] / 100) * numbers[1]
+
+            currentExpression = String(res)
+            updateDisplay(currentExpression)
+            return;
         }
-    } catch (error) {
-        console.error('Ошибка вычисления:', error);
-        display.textContent = 'Error';
-        currentExpression = '';
+        let res = currentExpression
+            .replace('×', '*')
+            .replace('÷', '/')
+            .replace('−', '-')
+
+        const result = eval(res)
+        currentExpression = String(result)
+        updateDisplay(currentExpression)
     }
-}
 
-function clearCal() {
-    currentExpression = '';
-    update();
-}
-
-function toggleSign() {
-    if (currentExpression !== '') {
-        resultCal();
-        
-        if (display.textContent !== 'Error') {
-            const currentValue = display.textContent;
-            if (currentValue.startsWith('-')) {
-                currentExpression = currentValue.slice(1);
-            } else {
-                currentExpression = '-' + currentValue;
-            }
-            
-            update();
+    function toggleSign() {
+        if (currentExpression !== '') {
+            resultCalculate()
+            currentExpression = String(Number(currentExpression * -1))
+            updateDisplay()
         }
     }
-}
 
-function handlePercent() {
-    if (currentExpression !== '') {
-        resultCal();
-        
-        if (display.textContent !== 'Error') {
-            const currentValue = display.textContent;
-            
-            currentExpression = currentValue + '%';
-            update();
-        }
+    function handlePercent() {
+        resultCalculate()
+
+        currentExpression += '%'
+
+        updateDisplay()
     }
-}
+};
 
 buttons.forEach(button => {
-    button.addEventListener('click', handleButton);
+    button.addEventListener('click', handleButton)
 });
