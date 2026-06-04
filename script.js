@@ -3,68 +3,83 @@ const buttons = document.querySelectorAll('.button');
 
 let currentExpression = '';
 
-function handleButton(button) {
-    const value = button.target.textContent;
+function handleButton(event){
+    const button = event.target;
+    const value = button.texContent;
+}
 
-    if (value === '=') {
-        resultCalculate()
-    } else if (value === 'AC') {
-        clearDisplay()
+if (value === 'AC') {
+        clearDisplay();
     } else if (value === '+/-') {
-        toggleSign()
+        toggleSign();
     } else if (value === '%') {
-        handlePercent()
+        calculatePercent();
+    } else if (value === '=') {
+        calculateResult();
+    } else if (['+', '−', '×', '÷'].includes(value)) {
+        addOperator(value);
     } else {
-        currentExpression += value
-        updateDisplay()
+        addNumberOrDecimal(value);
     }
+}
 
-    function updateDisplay() {
-        display.textContent = currentExpression || '0'
+function clearDisplay(){
+    currentExpression = '';
+    display.textContent = '0';
+}
+
+function toggleSign() {
+    if (currentExpression !== '') {
+        calculateResult();
     }
-
-
-    function clearDisplay() {
-        currentExpression = ''
-        updateDisplay()
-    }
-
-    function resultCalculate() {
-        if (currentExpression.includes('%')) {
-            const numbers = currentExpression.split("%")
-            const res = (numbers[0] / 100) * numbers[1]
-
-            currentExpression = String(res)
-            updateDisplay(currentExpression)
-            return;
+    const currentValue = display.textContent;
+    if (currentValue !== '0' && currentValue !== 'Error') {
+        if (currentValue.startsWith('-')) {
+            display.textContent = currentValue.substring(1);
+        } else {
+            display.textContent = '-' + currentValue;
         }
-        let res = currentExpression
-            .replace('×', '*')
-            .replace('÷', '/')
-            .replace('−', '-')
-
-        const result = eval(res)
-        currentExpression = String(result)
-        updateDisplay(currentExpression)
+        currentExpression = display.textContent;
     }
+}
 
-    function toggleSign() {
-        if (currentExpression !== '') {
-            resultCalculate()
-            currentExpression = String(Number(currentExpression * -1))
-            updateDisplay()
+function percent(){
+    if (currentExpression !== 'Error'){
+        currentExpression = currentValue + '%';
+        display.textContent = currentExpression;
+    }
+}
+
+function addOperator(operator){
+    const currentValue = display.textContent;
+}
+
+function addNumberOrDecimal(value){
+    if (should){
+        currentExpression = '';
+        display.textContent = '0';
+        should = false;
+    }
+    const currentValue = display.textContent;
+}
+
+function calculateResult(){
+    if(currentExpression === '')return;
+    try{
+        let expressionEval = currentExpression;
+        if (expressionEval.includes('%')){
+            expressionEval = processPercentages(expressionEval):
         }
+        expressionEval = expressionEval
+        .replace('×', '*')
+        .replaceAll('÷', '/')
+        .replaceAll('−', '-')
+        const result = eval(expressionEval);
+    } else {
+        const rounded = Math.round(result*1000000000) / 1000000000;
+        display.textContent = rounded.toString();
+        currentExpression = rounded.toString();
     }
+}
 
-    function handlePercent() {
-        resultCalculate()
-
-        currentExpression += '%'
-
-        updateDisplay()
-    }
-};
-
-buttons.forEach(button => {
-    button.addEventListener('click', handleButton)
-});
+function processPercentages
