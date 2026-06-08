@@ -124,3 +124,6 @@ function processPercentages(str){
     }
     return str.replace('&', '');
 }
+buttons.forEach(button => {
+    button.addEventListener('click', handleButton);
+});
